@@ -1,7 +1,7 @@
-from env_loading import load_env_variable
-from aiogram import Bot
-from aiogram.dispatcher import Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from env_loading import load_env_variable
+from aiogram.dispatcher import Dispatcher
+from aiogram import Bot
 
 m_storage = MemoryStorage()
 
