@@ -2,9 +2,8 @@ from contextlib import contextmanager
 from bot.db.connection import get_connection
 from bot.db.models.application import Application
 
-
-def create_table():
-    CREATE_TABLE = """
+# region ---------------DATABASE QUERIES------------------
+CREATE_TABLE = """
         CREATE TABLE IF NOT EXISTS application
         (
             id SERIAL PRIMARY KEY,
@@ -14,20 +13,23 @@ def create_table():
             location POINT
         );
     """
+
+INSERT_QUERY = """INSERT INTO application (section, section_name, phone_number, location) 
+                        VALUES (%s, %s, %s, POINT(%s));"""
+
+SELECT_QUERY = """SELECT id, section, section_name, phone_number FROM application;"""
+
+DELETE_QUERY = """DELETE FROM application WHERE id=%s;"""
+# endregion
+
+
+def create_table():
     with get_connection() as connection:
         with get_cursor(connection) as cursor:
             cursor.execute(CREATE_TABLE)
 
 
-def add_new_columns(applicationModel: Application):
-    """
-    Add new values to tables.
-
-    :param applicationModel:
-    :return: None
-    """
-    INSERT_QUERY = """INSERT INTO application (section, section_name, phone_number, location) 
-                        VALUES (%s, %s, %s, POINT(%s));"""
+def add_new_column(applicationModel: Application):
     with get_connection() as connection:
         with get_cursor(connection) as cursor:
             cursor.execute(INSERT_QUERY, (applicationModel.getSection(),
@@ -35,6 +37,19 @@ def add_new_columns(applicationModel: Application):
                                           applicationModel.getPhoneNumber(),
                                           f'{applicationModel.getLocation().latitude},'
                                           f'{applicationModel.getLocation().longitude}'))
+
+
+def get_all_columns():
+    with get_connection() as connection:
+        with get_cursor(connection) as cursor:
+            cursor.execute(SELECT_QUERY)
+            return cursor.fetchall()
+
+
+def delete_column(id: int):
+    with get_connection() as connection:
+        with get_cursor(connection) as cursor:
+            cursor.execute(DELETE_QUERY, (id,))
 
 
 @contextmanager
