@@ -27,14 +27,6 @@ async def enter_section_name(call: types.CallbackQuery, state: FSMContext):
 
 async def insert_data(call: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
-        print('inserting data...')
-        # current_section = data['selected_section']
-        # current_section_name = data['section_name']
-        # current_phone_number = data['phone_number']
-        # current_location = data['location']
-        # current_application = Application(
-        #     str(current_section), str(current_section_name), str(current_phone_number), current_location
-        # )
         add_new_column(data['application_model'])
     await main_menu(call, state)
 
