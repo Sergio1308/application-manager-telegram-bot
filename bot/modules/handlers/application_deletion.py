@@ -8,13 +8,10 @@ application_models_messages = {}
 
 
 class FSMDeletion(StatesGroup):
-    show_data = State()
-    warning_msg = State()
     deletion_msg = State()
 
 
 async def show_data(call: types.CallbackQuery):
-    # await FSMDeletion.show_data.set()
     data = get_all_columns()
     for c in data:
         msg = f'{c[1]}: {c[2]}\nКонтактный номер: {c[3]}'
@@ -26,7 +23,6 @@ async def show_data(call: types.CallbackQuery):
 
 
 async def delete_selected_column(call: types.CallbackQuery, state: FSMContext):
-    # await FSMDeletion.deletion_msg.set()
     async with state.proxy() as data:
         data['deletion_msg'] = call.message
         print(data['deletion_msg'])
