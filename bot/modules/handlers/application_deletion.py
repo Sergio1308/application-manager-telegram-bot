@@ -1,14 +1,15 @@
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram import types, Dispatcher
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from bot.db.database import get_all_columns, delete_column
+# TODO: move funcs to message/callback handlers/other classes, rewrite
 
 application_models_messages = {}
 
 
 class FSMDeletion(StatesGroup):
-    deletion_msg = State()
+    deletion_msg = State()  # todo: states class
 
 
 async def show_data(call: types.CallbackQuery):
@@ -25,7 +26,6 @@ async def show_data(call: types.CallbackQuery):
 async def delete_selected_column(call: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
         data['deletion_msg'] = call.message
-        print(data['deletion_msg'])
     await call.message.edit_text(
         'Вы уверены, что хотите удалить данную запись?', reply_markup=InlineKeyboardMarkup(row_width=2).add(
             InlineKeyboardButton(text='Да', callback_data='delete_column'),
