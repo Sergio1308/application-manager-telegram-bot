@@ -5,14 +5,14 @@ import aiogram.utils.markdown as md
 from aiogram import types, Dispatcher
 from aiogram.types import ParseMode
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
-import config
 from bot.db.models.application import Application
 from bot.db.database import add_new_column
-from bot.modules.handlers.message_handler import main_menu
+from bot.modules.handlers.callback_handler import main_menu
+# TODO: move funcs to message/callback handlers/other classes, rewrite
 
 
 class FSMCreation(StatesGroup):
-    # todo
+    # todo: states class
     selected_section = State()
     section_name = State()
     phone_number = State()
