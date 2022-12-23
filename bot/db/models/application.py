@@ -1,4 +1,3 @@
-
 class Application:
     def __init__(self, section, section_name, phone_number, location):
         self.section = section
