@@ -57,10 +57,19 @@ async def confirm_data(message: types.Message, state: FSMContext):
             ),
             parse_mode=ParseMode.MARKDOWN)
     await Forms.next()
+
+
+async def check_contact(message: types.Message):
+    await message.reply('Отправьте свой контактный номер, воспользуйтесь кнопкой ниже под полем ввода.')
+
+
+async def check_location(message: types.Message):
+    await message.reply('Отправьте свое местоположение, воспользуйтесь кнопкой ниже под полем ввода.')
 # endregion
 
 
 async def cancel_handler(message: types.Message, state: FSMContext):
+    """Exit from finite-state machine"""
     current_state = await state.get_state()
     if current_state is None:
         return
@@ -76,6 +85,8 @@ def init_message_handler(disp: Dispatcher):
     disp.register_message_handler(start_command, commands=['start', 'help'])
     disp.register_message_handler(cancel_handler, state='*', commands=['cancel', 'отмена'])
     disp.register_message_handler(cancel_handler, Text(equals=['cancel', 'отмена'], ignore_case=True), state='*')
+    disp.register_message_handler(check_contact, lambda message: not message.contact, state=Forms.phone_number)
+    disp.register_message_handler(check_location, lambda message: not message.location, state=Forms.location)
     disp.register_message_handler(share_phone_number, state=Forms.section_name)
     disp.register_message_handler(share_location, content_types=['contact'], state=Forms.phone_number)
     disp.register_message_handler(confirm_data, content_types=['location'], state=Forms.location)
