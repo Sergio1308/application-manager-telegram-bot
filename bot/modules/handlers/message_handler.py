@@ -7,6 +7,7 @@ from bot.modules.states import Forms
 from bot.db.models.application import Application
 from aiogram.dispatcher.filters import Text
 from aiogram.types import ParseMode
+from .callback_data_vars import *
 
 
 async def start_command(message: types.Message):
@@ -51,9 +52,8 @@ async def confirm_data(message: types.Message, state: FSMContext):
                                                     f'Долгота: {message.location.longitude}'),
                 sep='\n'
             ),
-            # reply_markup=types.ReplyKeyboardRemove(), todo
             reply_markup=inline_keyboard_creator.create_inline_keyboard(
-                ['Подтвердить', 'Отклонить'], ['insert_query', 'main_menu']
+                ['Подтвердить', 'Отклонить'], [INSERT_DATA, MAIN_MENU]
             ),
             parse_mode=ParseMode.MARKDOWN)
     await Forms.next()
