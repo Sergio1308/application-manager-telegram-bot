@@ -5,7 +5,7 @@ from bot.modules.states import Forms
 from bot.db.database import add_new_column, get_all_columns, delete_column
 from .callback_data_vars import *
 
-sections = ['Склад', 'Магазин', 'Офис']
+SECTIONS = ['Склад', 'Магазин', 'Офис']
 application_models_messages = {}
 
 
@@ -18,7 +18,7 @@ async def main_menu(call: types.CallbackQuery, state: FSMContext):
 
 async def specify_section(call: types.CallbackQuery):
     await call.message.answer('Укажите раздел:', reply_markup=inline_keyboard_creator.
-                              create_inline_keyboard(sections, sections, row_width=3))
+                              create_inline_keyboard(SECTIONS, SECTIONS, row_width=3))
     await Forms.section.set()
     await call.answer()
 
@@ -82,7 +82,7 @@ async def execute_deletion(call: types.CallbackQuery, state: FSMContext):
 def init_callback_handlers(disp: Dispatcher):
     disp.register_callback_query_handler(main_menu, text=MAIN_MENU, state=Forms.application_model)
     disp.register_callback_query_handler(specify_section, text=CREATE_APPLICATION, state=None)
-    disp.register_callback_query_handler(enter_section_name, text=sections, state=Forms.section)
+    disp.register_callback_query_handler(enter_section_name, text=SECTIONS, state=Forms.section)
     disp.register_callback_query_handler(insert_data, text=INSERT_DATA, state=Forms.application_model)
 
     disp.register_callback_query_handler(show_data, text=DELETE_APPLICATION)
