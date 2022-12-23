@@ -1,6 +1,6 @@
 from contextlib import contextmanager
-from bot.db.connection import get_connection
-from bot.db.models.application import Application
+from .connection import get_connection
+from .models.application import Application
 
 # region ---------------DATABASE QUERIES------------------
 CREATE_TABLE = """

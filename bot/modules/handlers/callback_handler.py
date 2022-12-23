@@ -1,8 +1,9 @@
 from aiogram import types, Dispatcher
-from bot.modules.keyboard import inline_start_keyboard, inline_keyboard_creator
+from bot.modules.keyboard import inline_keyboard_creator
 from aiogram.dispatcher import FSMContext
 from bot.modules.states import Forms
 from bot.db.database import add_new_column, get_all_columns, delete_column
+from .callback_data_vars import *
 
 sections = ['Склад', 'Магазин', 'Офис']
 application_models_messages = {}
@@ -10,7 +11,7 @@ application_models_messages = {}
 
 # region CREATE_APPLICATION
 async def main_menu(call: types.CallbackQuery, state: FSMContext):
-    await call.message.edit_text('Вы вернулись в главное меню\nВыберите пункт 👇', reply_markup=inline_start_keyboard())
+    await call.message.answer('Вы вернулись в главное меню.', reply_markup=types.ReplyKeyboardRemove())
     await state.finish()
     await call.answer()
 
@@ -44,7 +45,7 @@ async def show_data(call: types.CallbackQuery, state: FSMContext):
     for entry in data:
         msg = f'{entry[1]}: {entry[2]}\nКонтактный номер: {entry[3]}'
         m = await call.message.answer(msg, reply_markup=inline_keyboard_creator.create_inline_keyboard(
-            ['Удалить запись'], ['deletion_confirmation']
+            ['Удалить запись'], [DELETE_ENTRY]
         ))
         application_models_messages.update({m.message_id: entry[0]})
     async with state.proxy() as data:
@@ -57,7 +58,7 @@ async def delete_selected_column(call: types.CallbackQuery, state: FSMContext):
         data['selected_message'] = call.message
     await call.message.edit_text(
         'Вы уверены, что хотите удалить данную запись?', reply_markup=inline_keyboard_creator.create_inline_keyboard(
-            ['Да', 'Нет'], ['delete_column', 'cancel_deletion']
+            ['Да', 'Нет'], [DELETE_COLUMN, CANCEL_COLUMN_DELETION]
         ))
     await call.answer()
 
@@ -79,12 +80,12 @@ async def execute_deletion(call: types.CallbackQuery, state: FSMContext):
 
 
 def init_callback_handlers(disp: Dispatcher):
-    disp.register_callback_query_handler(main_menu, text='main_menu', state='*')
-    disp.register_callback_query_handler(specify_section, text='create_application', state=None)
+    disp.register_callback_query_handler(main_menu, text=MAIN_MENU, state=Forms.application_model)
+    disp.register_callback_query_handler(specify_section, text=CREATE_APPLICATION, state=None)
     disp.register_callback_query_handler(enter_section_name, text=sections, state=Forms.section)
-    disp.register_callback_query_handler(insert_data, text='insert_query', state=Forms.application_model)
+    disp.register_callback_query_handler(insert_data, text=INSERT_DATA, state=Forms.application_model)
 
-    disp.register_callback_query_handler(show_data, text='delete_application')
-    disp.register_callback_query_handler(delete_selected_column, text='deletion_confirmation')
-    disp.register_callback_query_handler(cancel_deletion, text='cancel_deletion')
-    disp.register_callback_query_handler(execute_deletion, text='delete_column')
+    disp.register_callback_query_handler(show_data, text=DELETE_APPLICATION)
+    disp.register_callback_query_handler(delete_selected_column, text=DELETE_ENTRY)
+    disp.register_callback_query_handler(cancel_deletion, text=CANCEL_COLUMN_DELETION)
+    disp.register_callback_query_handler(execute_deletion, text=DELETE_COLUMN)
