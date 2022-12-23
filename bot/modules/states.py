@@ -1,4 +1,5 @@
 from aiogram.dispatcher.filters.state import State, StatesGroup
+from bot.db.models.application import Application
 
 
 class Forms(StatesGroup):
@@ -6,6 +7,7 @@ class Forms(StatesGroup):
     section_name = State()
     phone_number = State()
     location = State()
+    application_model: Application = State()  # POPO object (db model)
 
-    application_model = State()  # POPO object (db model)
-    application_models_messages = State()  # dict
+    application_models_messages: dict = State()
+    selected_message = State()

@@ -13,6 +13,7 @@ async def start_command(message: types.Message):
     await message.reply('Выберите пункт 👇', reply_markup=inline_start_keyboard())
 
 
+# region CREATE_APPLICATION
 async def share_phone_number(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['section_name'] = message.text
@@ -56,6 +57,7 @@ async def confirm_data(message: types.Message, state: FSMContext):
             ),
             parse_mode=ParseMode.MARKDOWN)
     await Forms.next()
+# endregion
 
 
 async def cancel_handler(message: types.Message, state: FSMContext):
@@ -72,8 +74,8 @@ async def send_other_text(message: types.Message):
 
 def init_message_handler(disp: Dispatcher):
     disp.register_message_handler(start_command, commands=['start', 'help'])
-    disp.register_message_handler(cancel_handler, state='*', commands=['cancel'])
-    disp.register_message_handler(cancel_handler, Text(equals='cancel', ignore_case=True), state='*')
+    disp.register_message_handler(cancel_handler, state='*', commands=['cancel', 'отмена'])
+    disp.register_message_handler(cancel_handler, Text(equals=['cancel', 'отмена'], ignore_case=True), state='*')
     disp.register_message_handler(share_phone_number, state=Forms.section_name)
     disp.register_message_handler(share_location, content_types=['contact'], state=Forms.phone_number)
     disp.register_message_handler(confirm_data, content_types=['location'], state=Forms.location)
