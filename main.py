@@ -3,7 +3,7 @@ import logging
 from bot.modules.handlers import message_handler, callback_handler
 from bot.db.database import create_table
 from aiogram.utils import executor
-from config import dp
+from bot.config import dp
 
 logging.basicConfig(level=logging.INFO)
 
