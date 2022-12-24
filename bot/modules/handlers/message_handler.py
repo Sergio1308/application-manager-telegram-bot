@@ -1,13 +1,17 @@
 import aiogram.utils.markdown as md
 
 from aiogram import types, Dispatcher
-from bot.modules.keyboard import inline_start_keyboard, inline_keyboard_creator, reply_keyboard_creator
+from bot.modules.keyboard import create_inline_keyboard, create_reply_keyboard
 from aiogram.dispatcher import FSMContext
 from bot.modules.states import Forms
 from bot.db.models.application import Application
 from aiogram.dispatcher.filters import Text
 from aiogram.types import ParseMode
 from .callback_data_vars import *
+
+
+def inline_start_keyboard():
+    return create_inline_keyboard(['Создать заявку', 'Удалить заявку'], [CREATE_APPLICATION, DELETE_APPLICATION])
 
 
 async def start_command(message: types.Message):
@@ -19,9 +23,7 @@ async def share_phone_number(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['section_name'] = message.text
     await message.reply('Отправь мне свой номер телефона, используя кнопку ниже:',
-                        reply_markup=reply_keyboard_creator.create_reply_keyboard(
-                            ['Отправить свой номер'], request_contact=True
-                        ))
+                        reply_markup=create_reply_keyboard(['Отправить свой номер'], request_contact=True))
     await Forms.next()
 
 
@@ -29,9 +31,7 @@ async def share_location(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['phone_number'] = message.contact.phone_number.replace('+', '')
     await message.reply('Отправь мне свое местоположение, используя кнопку ниже:',
-                        reply_markup=reply_keyboard_creator.create_reply_keyboard(
-                            ['Отправить свое местоположение'], request_location=True
-                        ))
+                        reply_markup=create_reply_keyboard(['Отправить свое местоположение'], request_location=True))
     await Forms.next()
 
 
@@ -42,7 +42,6 @@ async def confirm_data(message: types.Message, state: FSMContext):
             data['section'], data['section_name'], data['phone_number'], data['location']
         )
         app_model = data['application_model']
-        print(app_model)
         await message.answer(
             md.text(
                 md.text(md.bold('Раздел:'), app_model.getSection()),
@@ -52,9 +51,7 @@ async def confirm_data(message: types.Message, state: FSMContext):
                                                     f'Долгота: {message.location.longitude}'),
                 sep='\n'
             ),
-            reply_markup=inline_keyboard_creator.create_inline_keyboard(
-                ['Подтвердить', 'Отклонить'], [INSERT_DATA, MAIN_MENU]
-            ),
+            reply_markup=create_inline_keyboard(['Подтвердить', 'Отклонить'], [INSERT_DATA, MAIN_MENU]),
             parse_mode=ParseMode.MARKDOWN)
     await Forms.next()
 
@@ -73,7 +70,7 @@ async def cancel_handler(message: types.Message, state: FSMContext):
     current_state = await state.get_state()
     if current_state is None:
         return
-    await message.reply('Отменено.')
+    await message.reply('Отменено.', reply_markup=types.ReplyKeyboardRemove())
     await state.finish()
 
 

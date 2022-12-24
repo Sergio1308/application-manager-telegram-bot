@@ -1,11 +1,10 @@
 from aiogram import types, Dispatcher
-from bot.modules.keyboard import inline_keyboard_creator
+from bot.modules.keyboard import create_inline_keyboard
 from aiogram.dispatcher import FSMContext
 from bot.modules.states import Forms
 from bot.db.database import add_new_column, get_all_columns, delete_column
 from .callback_data_vars import *
 
-sections = ['Склад', 'Магазин', 'Офис']
 application_models_messages = {}
 
 
@@ -17,8 +16,7 @@ async def main_menu(call: types.CallbackQuery, state: FSMContext):
 
 
 async def specify_section(call: types.CallbackQuery):
-    await call.message.answer('Укажите раздел:', reply_markup=inline_keyboard_creator.
-                              create_inline_keyboard(sections, sections, row_width=3))
+    await call.message.answer('Укажите раздел:', reply_markup=create_inline_keyboard(SECTIONS, SECTIONS, row_width=3))
     await Forms.section.set()
     await call.answer()
 
@@ -41,12 +39,12 @@ async def insert_data(call: types.CallbackQuery, state: FSMContext):
 
 # region DELETE_APPLICATION
 async def show_data(call: types.CallbackQuery, state: FSMContext):
-    data = get_all_columns()
-    for entry in data:
+    all_entries: list = get_all_columns()
+    for entry in all_entries:
+        # entry represented as a list of one column data from a table, where index 0 is id, index 1 - section,
+        # index 2 - section_name, index 3 - phone_number
         msg = f'{entry[1]}: {entry[2]}\nКонтактный номер: {entry[3]}'
-        m = await call.message.answer(msg, reply_markup=inline_keyboard_creator.create_inline_keyboard(
-            ['Удалить запись'], [DELETE_ENTRY]
-        ))
+        m = await call.message.answer(msg, reply_markup=create_inline_keyboard(['Удалить запись'], [DELETE_ENTRY]))
         application_models_messages.update({m.message_id: entry[0]})
     async with state.proxy() as data:
         data['application_models_messages'] = application_models_messages
@@ -57,7 +55,7 @@ async def delete_selected_column(call: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
         data['selected_message'] = call.message
     await call.message.edit_text(
-        'Вы уверены, что хотите удалить данную запись?', reply_markup=inline_keyboard_creator.create_inline_keyboard(
+        'Вы уверены, что хотите удалить данную запись?', reply_markup=create_inline_keyboard(
             ['Да', 'Нет'], [DELETE_COLUMN, CANCEL_COLUMN_DELETION]
         ))
     await call.answer()
@@ -82,7 +80,7 @@ async def execute_deletion(call: types.CallbackQuery, state: FSMContext):
 def init_callback_handlers(disp: Dispatcher):
     disp.register_callback_query_handler(main_menu, text=MAIN_MENU, state=Forms.application_model)
     disp.register_callback_query_handler(specify_section, text=CREATE_APPLICATION, state=None)
-    disp.register_callback_query_handler(enter_section_name, text=sections, state=Forms.section)
+    disp.register_callback_query_handler(enter_section_name, text=SECTIONS, state=Forms.section)
     disp.register_callback_query_handler(insert_data, text=INSERT_DATA, state=Forms.application_model)
 
     disp.register_callback_query_handler(show_data, text=DELETE_APPLICATION)

@@ -3,6 +3,9 @@ from bot.db.models.application import Application
 
 
 class Forms(StatesGroup):
+    """
+    A class that represents states of finite state machine
+    """
     section = State()
     section_name = State()
     phone_number = State()

@@ -1,3 +1,2 @@
 from .inline_keyboard_creator import create_inline_keyboard
 from .reply_keyboard_creator import create_reply_keyboard
-from .create_inline_start_keyboard import inline_start_keyboard
