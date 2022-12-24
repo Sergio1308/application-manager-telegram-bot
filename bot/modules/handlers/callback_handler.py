@@ -5,7 +5,6 @@ from bot.modules.states import Forms
 from bot.db.database import add_new_column, get_all_columns, delete_column
 from .callback_data_vars import *
 
-SECTIONS = ['Склад', 'Магазин', 'Офис']
 application_models_messages = {}
 
 
