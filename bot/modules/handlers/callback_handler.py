@@ -40,6 +40,8 @@ async def insert_data(call: types.CallbackQuery, state: FSMContext):
 # region DELETE_APPLICATION
 async def show_data(call: types.CallbackQuery, state: FSMContext):
     all_entries: list = get_all_columns()
+    if not all_entries:
+        return await call.message.answer('Записей не найдено.')
     for entry in all_entries:
         # entry represented as a list of one column data from a table, where index 0 is id, index 1 - section,
         # index 2 - section_name, index 3 - phone_number
