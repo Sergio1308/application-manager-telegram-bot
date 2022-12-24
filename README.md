@@ -4,10 +4,6 @@ This bot allows you to create applications and delete them from the database. Ea
 Bot available [here](https://t.me/application_manager_tg_bot), or type @application_manager_tg_bot in the search field.
 
 # Project Structure
-* requirements.txt contains all dependencies needed to run the program.
-* main.py starts the bot
-* env_loading.py is used to load environment variables
-* .env.example - environment variables example
 * package bot contains:
   * db package:
     * package models with application.py
@@ -17,6 +13,10 @@ Bot available [here](https://t.me/application_manager_tg_bot), or type @applicat
     * keyboard package, where are the classes responsible for creating inline and reply keyboard markup
     * states.py that stores the states of finite machine
   * config.py, bot configuration
+* .env.example - environment variables example
+* env_loading.py is used to load environment variables
+* main.py starts the bot
+* requirements.txt contains all dependencies needed to run the program.
 ```
 .
 ├───bot
